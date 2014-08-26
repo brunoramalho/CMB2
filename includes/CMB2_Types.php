@@ -416,6 +416,10 @@ class CMB2_Types {
 		return $this->input();
 	}
 
+	public function hidden() {
+		return $this->input( array( 'type' => 'hidden', 'desc' => '', 'class' => '' ) );
+	}
+
 	public function text_small() {
 		return $this->input( array( 'class' => 'cmb2_text_small', 'desc' => $this->_desc() ) );
 	}
@@ -608,7 +612,12 @@ class CMB2_Types {
 	}
 
 	public function multicheck( $type = 'checkbox' ) {
-		return $this->radio( array( 'class' => 'cmb2_checkbox_list cmb2_list', 'options' => $this->concat_options( array( 'type' => 'checkbox', 'name' => $this->_name() .'[]' ), 'list_input_checkbox' ) ), $type );
+
+		$classes = false === $this->field->args( 'select_all_button' )
+			? 'cmb2_checkbox_list no_select_all cmb2_list'
+			: 'cmb2_checkbox_list cmb2_list';
+
+		return $this->radio( array( 'class' => $classes, 'options' => $this->concat_options( array( 'type' => 'checkbox', 'name' => $this->_name() .'[]' ), 'list_input_checkbox' ) ), $type );
 	}
 
 	public function multicheck_inline() {
@@ -698,7 +707,11 @@ class CMB2_Types {
 			}
 		}
 
-		return $this->radio( array( 'class' => 'cmb2_checkbox_list cmb2_list', 'options' => $options ), 'taxonomy_multicheck' );
+		$classes = false === $this->field->args( 'select_all_button' )
+			? 'cmb2_checkbox_list no_select_all cmb2_list'
+			: 'cmb2_checkbox_list cmb2_list';
+
+		return $this->radio( array( 'class' => $classes, 'options' => $options ), 'taxonomy_multicheck' );
 	}
 
 	public function taxonomy_multicheck_inline() {
@@ -762,9 +775,10 @@ class CMB2_Types {
 
 	public function file() {
 		$meta_value = $this->field->escaped_value();
-		$allow      = $this->field->args( 'allow' );
-		$input_type = ( 'url' == $allow || ( is_array( $allow ) && in_array( 'url', $allow ) ) )
-			? 'text' : 'hidden';
+		$options    = (array) $this->field->args( 'options' );
+
+		// if options array and 'url' => false, then hide the url field
+		$input_type = array_key_exists( 'url', $options ) && false === $options['url'] ? 'hidden' : 'text';
 
 		echo $this->input( array(
 			'type'  => $input_type,

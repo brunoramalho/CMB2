@@ -2,18 +2,34 @@
  * CMB Styling
  */
 $mobile-break: 450px;
-@mixin fullth {
+@mixin fullth() {
+	font-size: 1.2em;
+	@include _fullth;
+}
+@mixin fullth_side() {
+	@include _fullth;
+	label {
+		font-size: 14px;
+		line-height: 1.4em;
+	}
+}
+@mixin _fullth() {
 	width: 100%;
 	display: block;
 	float: none;
 	text-align: left;
-	font-size: 1.2em;
 	padding-bottom: 1em;
 	label {
 		display: block;
 		padding-bottom: 5px;
-		border-bottom: 1px solid #E9E9E9;
 		margin-top: 0em;
+		&:after {
+			content: '';
+			display: block;
+			clear: both;
+			padding-top: .4em;
+			border-bottom: 1px solid #E9E9E9;
+		}
 	}
 }
 .cmb2_wrap {
@@ -484,6 +500,10 @@ div {
 
 	.cmb2_wrap {
 
+		> ul > .cmb-row {
+			padding: 1.4em 0;
+		}
+
 		.cmb-row, .repeatable-group {
 			border-bottom: 0;
 		}
@@ -495,7 +515,7 @@ div {
 		}
 
 		.cmb-th {
-			@include fullth;
+			@include fullth_side;
 		}
 
 		input {
@@ -537,6 +557,12 @@ div {
 		.cmb2_metabox_description {
 			display: block;
 			padding: 7px 0 0;
+		}
+		.cmb-type-checkbox {
+			.cmb-td label, .cmb2_metabox_description {
+				font-weight: normal;
+				display: inline;
+			}
 		}
 
 		.cmb2_metabox_title {

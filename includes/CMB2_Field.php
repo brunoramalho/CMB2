@@ -48,8 +48,6 @@ class CMB2_Field {
 	 */
 	public function __construct( $args ) {
 
-		$this->args = $this->_set_field_defaults( $args['field_args'] );
-
 		if ( ! empty( $args['group_field'] ) ) {
 			$this->group       = $args['group_field'];
 			$this->object_id   = $this->group->object_id;
@@ -59,6 +57,8 @@ class CMB2_Field {
 			$this->object_type = $args['object_type'];
 			$this->group       = false;
 		}
+
+		$this->args = $this->_set_field_defaults( $args['field_args'] );
 
 		// Allow an override for the field's value
 		// (assuming no one would want to save 'cmb2_field_no_override_val' as a value)
@@ -233,10 +233,6 @@ class CMB2_Field {
 		} elseif ( $cb ) {
 			// Ok, callback is good, let's run it.
 			return call_user_func( $cb, $meta_value, $this->args(), $this );
-		}
-
-		if ( empty( $meta_value ) ) {
-			return $meta_value;
 		}
 
 		$clean = new CMB2_Sanitize( $this, $meta_value );
@@ -495,10 +491,9 @@ class CMB2_Field {
 		if ( ! isset( $args['time_format'] ) ) $args['time_format'] = 'h:i A';
 		// Allow a filter override of the default value
 		$args['default']    = apply_filters( 'cmb2_default_filter', $args['default'], $this );
-		$args['allow']      = 'file' == $args['type'] && ! isset( $args['allow'] ) ? array( 'url', 'attachment' ) : array();
-		$args['save_id']    = 'file' == $args['type'] && ! ( isset( $args['save_id'] ) && ! $args['save_id'] );
 		// $args['multiple']   = isset( $args['multiple'] ) ? $args['multiple'] : ( 'multicheck' == $args['type'] ? true : false );
 		$args['multiple']   = isset( $args['multiple'] ) ? $args['multiple'] : false;
+		$args['select_all_button'] = isset( $args['select_all_button'] ) ? $args['select_all_button'] : true;
 		$args['repeatable'] = isset( $args['repeatable'] ) && $args['repeatable'] && ! $this->repeatable_exception( $args['type'] );
 		$args['inline']     = isset( $args['inline'] ) && $args['inline'] || false !== stripos( $args['type'], '_inline' );
 		$args['on_front']   = ! ( isset( $args['on_front'] ) && ! $args['on_front'] );
@@ -514,6 +509,7 @@ class CMB2_Field {
 		$args['_name']      = $args['id'];
 
 		if ( $this->group ) {
+
 			$args['id'] = $this->group->args( 'id' ) .'_'. $this->group->args( 'count' ) .'_'. $args['id'];
 			$args['_name'] = $this->group->args( 'id' ) .'['. $this->group->args( 'count' ) .']['. $args['_name'] .']';
 		}
